@@ -1,0 +1,188 @@
+{
+  "basketball": [
+    {"id":"bb-001","sport":"basketball","legs":[
+      {"player_id":"nba_jayson_tatum","player_name":"Jayson Tatum","stat":"points","line":28.5,"direction":"over","base_prob":0.51},
+      {"player_id":"nba_jrue_holiday","player_name":"Jrue Holiday","stat":"assists","line":5.5,"direction":"over","base_prob":0.53}
+    ]},
+    {"id":"bb-002","sport":"basketball","legs":[
+      {"player_id":"nba_jayson_tatum","player_name":"Jayson Tatum","stat":"rebounds","line":8.5,"direction":"over","base_prob":0.50},
+      {"player_id":"nba_donovan_mitchell","player_name":"Donovan Mitchell","stat":"points","line":27.5,"direction":"over","base_prob":0.52}
+    ]},
+    {"id":"bb-003","sport":"basketball","legs":[
+      {"player_id":"nba_ja_morant","player_name":"Ja Morant","stat":"points","line":26.5,"direction":"over","base_prob":0.54},
+      {"player_id":"nba_domantas_sabonis","player_name":"Domantas Sabonis","stat":"rebounds","line":12.5,"direction":"over","base_prob":0.53}
+    ]},
+    {"id":"bb-004","sport":"basketball","legs":[
+      {"player_id":"nba_jayson_tatum","player_name":"Jayson Tatum","stat":"three_pointers_made","line":3.5,"direction":"over","base_prob":0.48},
+      {"player_id":"nba_jrue_holiday","player_name":"Jrue Holiday","stat":"points","line":14.5,"direction":"over","base_prob":0.55}
+    ]},
+    {"id":"bb-005","sport":"basketball","legs":[
+      {"player_id":"nba_donovan_mitchell","player_name":"Donovan Mitchell","stat":"three_pointers_made","line":3.5,"direction":"over","base_prob":0.49},
+      {"player_id":"nba_ja_morant","player_name":"Ja Morant","stat":"assists","line":7.0,"direction":"over","base_prob":0.52}
+    ]},
+    {"id":"bb-006","sport":"basketball","legs":[
+      {"player_id":"nba_domantas_sabonis","player_name":"Domantas Sabonis","stat":"assists","line":7.5,"direction":"over","base_prob":0.54},
+      {"player_id":"nba_deaaron_fox","player_name":"De'Aaron Fox","stat":"points","line":25.5,"direction":"over","base_prob":0.52}
+    ]},
+    {"id":"bb-007","sport":"basketball","legs":[
+      {"player_id":"nba_deaaron_fox","player_name":"De'Aaron Fox","stat":"three_pointers_made","line":2.5,"direction":"over","base_prob":0.47},
+      {"player_id":"nba_domantas_sabonis","player_name":"Domantas Sabonis","stat":"points","line":20.5,"direction":"over","base_prob":0.51}
+    ]},
+    {"id":"bb-008","sport":"basketball","legs":[
+      {"player_id":"nba_jayson_tatum","player_name":"Jayson Tatum","stat":"points","line":29.5,"direction":"over","base_prob":0.49},
+      {"player_id":"nba_ja_morant","player_name":"Ja Morant","stat":"rebounds","line":5.5,"direction":"over","base_prob":0.50}
+    ]},
+    {"id":"bb-009","sport":"basketball","legs":[
+      {"player_id":"nba_donovan_mitchell","player_name":"Donovan Mitchell","stat":"points","line":28.5,"direction":"over","base_prob":0.50},
+      {"player_id":"nba_jrue_holiday","player_name":"Jrue Holiday","stat":"steals","line":1.5,"direction":"over","base_prob":0.52}
+    ]},
+    {"id":"bb-010","sport":"basketball","legs":[
+      {"player_id":"nba_domantas_sabonis","player_name":"Domantas Sabonis","stat":"rebounds","line":13.5,"direction":"under","base_prob":0.55},
+      {"player_id":"nba_deaaron_fox","player_name":"De'Aaron Fox","stat":"assists","line":6.5,"direction":"over","base_prob":0.51}
+    ]},
+    {"id":"bb-011","sport":"basketball","legs":[
+      {"player_id":"nba_jayson_tatum","player_name":"Jayson Tatum","stat":"free_throws_made","line":6.5,"direction":"over","base_prob":0.53},
+      {"player_id":"nba_donovan_mitchell","player_name":"Donovan Mitchell","stat":"assists","line":5.5,"direction":"over","base_prob":0.50}
+    ]},
+    {"id":"bb-012","sport":"basketball","legs":[
+      {"player_id":"nba_jrue_holiday","player_name":"Jrue Holiday","stat":"points","line":15.5,"direction":"over","base_prob":0.54},
+      {"player_id":"nba_domantas_sabonis","player_name":"Domantas Sabonis","stat":"points","line":21.5,"direction":"over","base_prob":0.51}
+    ]},
+    {"id":"bb-013","sport":"basketball","legs":[
+      {"player_id":"nba_deaaron_fox","player_name":"De'Aaron Fox","stat":"points","line":26.5,"direction":"over","base_prob":0.50},
+      {"player_id":"nba_ja_morant","player_name":"Ja Morant","stat":"points","line":27.0,"direction":"over","base_prob":0.52}
+    ]},
+    {"id":"bb-014","sport":"basketball","legs":[
+      {"player_id":"nba_domantas_sabonis","player_name":"Domantas Sabonis","stat":"rebounds","line":11.5,"direction":"over","base_prob":0.57},
+      {"player_id":"nba_jayson_tatum","player_name":"Jayson Tatum","stat":"rebounds","line":9.0,"direction":"under","base_prob":0.52}
+    ]},
+    {"id":"bb-015","sport":"basketball","legs":[
+      {"player_id":"nba_ja_morant","player_name":"Ja Morant","stat":"assists","line":8.0,"direction":"under","base_prob":0.51},
+      {"player_id":"nba_donovan_mitchell","player_name":"Donovan Mitchell","stat":"three_pointers_made","line":4.0,"direction":"under","base_prob":0.53}
+    ]}
+  ],
+  "soccer": [
+    {"id":"sc-001","sport":"soccer","legs":[
+      {"player_id":"soc_lionel_messi","player_name":"Lionel Messi","stat":"shots_on_target","line":1.5,"direction":"over","base_prob":0.62},
+      {"player_id":"soc_kylian_mbappe","player_name":"Kylian Mbappé","stat":"goals","line":0.5,"direction":"over","base_prob":0.57}
+    ]},
+    {"id":"sc-002","sport":"soccer","legs":[
+      {"player_id":"soc_erling_haaland","player_name":"Erling Haaland","stat":"goals","line":0.5,"direction":"over","base_prob":0.64},
+      {"player_id":"soc_kevin_de_bruyne","player_name":"Kevin De Bruyne","stat":"assists","line":0.5,"direction":"over","base_prob":0.48}
+    ]},
+    {"id":"sc-003","sport":"soccer","legs":[
+      {"player_id":"soc_mohamed_salah","player_name":"Mohamed Salah","stat":"shots_on_target","line":1.5,"direction":"over","base_prob":0.59},
+      {"player_id":"soc_lionel_messi","player_name":"Lionel Messi","stat":"chances_created","line":2.5,"direction":"over","base_prob":0.55}
+    ]},
+    {"id":"sc-004","sport":"soccer","legs":[
+      {"player_id":"soc_kylian_mbappe","player_name":"Kylian Mbappé","stat":"shots_on_target","line":1.5,"direction":"over","base_prob":0.58},
+      {"player_id":"soc_erling_haaland","player_name":"Erling Haaland","stat":"shots_on_target","line":1.5,"direction":"over","base_prob":0.60}
+    ]},
+    {"id":"sc-005","sport":"soccer","legs":[
+      {"player_id":"soc_lionel_messi","player_name":"Lionel Messi","stat":"goals","line":0.5,"direction":"over","base_prob":0.55},
+      {"player_id":"soc_kevin_de_bruyne","player_name":"Kevin De Bruyne","stat":"assists","line":0.5,"direction":"over","base_prob":0.49}
+    ]},
+    {"id":"sc-006","sport":"soccer","legs":[
+      {"player_id":"soc_mohamed_salah","player_name":"Mohamed Salah","stat":"goals","line":0.5,"direction":"over","base_prob":0.52},
+      {"player_id":"soc_kylian_mbappe","player_name":"Kylian Mbappé","stat":"goals","line":0.5,"direction":"over","base_prob":0.56}
+    ]},
+    {"id":"sc-007","sport":"soccer","legs":[
+      {"player_id":"soc_erling_haaland","player_name":"Erling Haaland","stat":"goals","line":1.5,"direction":"under","base_prob":0.58},
+      {"player_id":"soc_lionel_messi","player_name":"Lionel Messi","stat":"assists","line":0.5,"direction":"over","base_prob":0.54}
+    ]},
+    {"id":"sc-008","sport":"soccer","legs":[
+      {"player_id":"soc_kevin_de_bruyne","player_name":"Kevin De Bruyne","stat":"chances_created","line":2.5,"direction":"over","base_prob":0.53},
+      {"player_id":"soc_kylian_mbappe","player_name":"Kylian Mbappé","stat":"shots_on_target","line":2.5,"direction":"under","base_prob":0.52}
+    ]},
+    {"id":"sc-009","sport":"soccer","legs":[
+      {"player_id":"soc_mohamed_salah","player_name":"Mohamed Salah","stat":"goals","line":0.5,"direction":"under","base_prob":0.51},
+      {"player_id":"soc_erling_haaland","player_name":"Erling Haaland","stat":"goals","line":1.0,"direction":"under","base_prob":0.55}
+    ]},
+    {"id":"sc-010","sport":"soccer","legs":[
+      {"player_id":"soc_lionel_messi","player_name":"Lionel Messi","stat":"shots_on_target","line":2.5,"direction":"under","base_prob":0.54},
+      {"player_id":"soc_kevin_de_bruyne","player_name":"Kevin De Bruyne","stat":"assists","line":1.0,"direction":"under","base_prob":0.56}
+    ]},
+    {"id":"sc-011","sport":"soccer","legs":[
+      {"player_id":"soc_kylian_mbappe","player_name":"Kylian Mbappé","stat":"goals","line":1.0,"direction":"under","base_prob":0.57},
+      {"player_id":"soc_mohamed_salah","player_name":"Mohamed Salah","stat":"shots_on_target","line":2.5,"direction":"under","base_prob":0.53}
+    ]},
+    {"id":"sc-012","sport":"soccer","legs":[
+      {"player_id":"soc_erling_haaland","player_name":"Erling Haaland","stat":"shots_on_target","line":2.5,"direction":"under","base_prob":0.56},
+      {"player_id":"soc_kevin_de_bruyne","player_name":"Kevin De Bruyne","stat":"assists","line":0.5,"direction":"under","base_prob":0.52}
+    ]},
+    {"id":"sc-013","sport":"soccer","legs":[
+      {"player_id":"soc_lionel_messi","player_name":"Lionel Messi","stat":"chances_created","line":3.5,"direction":"under","base_prob":0.55},
+      {"player_id":"soc_mohamed_salah","player_name":"Mohamed Salah","stat":"goals","line":1.0,"direction":"under","base_prob":0.56}
+    ]},
+    {"id":"sc-014","sport":"soccer","legs":[
+      {"player_id":"soc_kevin_de_bruyne","player_name":"Kevin De Bruyne","stat":"chances_created","line":3.5,"direction":"under","base_prob":0.57},
+      {"player_id":"soc_kylian_mbappe","player_name":"Kylian Mbappé","stat":"goals","line":1.5,"direction":"under","base_prob":0.58}
+    ]},
+    {"id":"sc-015","sport":"soccer","legs":[
+      {"player_id":"soc_erling_haaland","player_name":"Erling Haaland","stat":"goals","line":1.5,"direction":"under","base_prob":0.60},
+      {"player_id":"soc_lionel_messi","player_name":"Lionel Messi","stat":"shots_on_target","line":3.0,"direction":"under","base_prob":0.59}
+    ]}
+  ],
+  "football": [
+    {"id":"fb-001","sport":"football","legs":[
+      {"player_id":"nfl_patrick_mahomes","player_name":"Patrick Mahomes","stat":"passing_yards","line":287.5,"direction":"over","base_prob":0.56},
+      {"player_id":"nfl_travis_kelce","player_name":"Travis Kelce","stat":"receiving_yards","line":73.5,"direction":"over","base_prob":0.54}
+    ]},
+    {"id":"fb-002","sport":"football","legs":[
+      {"player_id":"nfl_josh_allen","player_name":"Josh Allen","stat":"passing_yards","line":265.5,"direction":"over","base_prob":0.53},
+      {"player_id":"nfl_stephon_diggs","player_name":"Stefon Diggs","stat":"receiving_yards","line":82.5,"direction":"over","base_prob":0.52}
+    ]},
+    {"id":"fb-003","sport":"football","legs":[
+      {"player_id":"nfl_christian_mccaffrey","player_name":"Christian McCaffrey","stat":"rushing_yards","line":79.5,"direction":"over","base_prob":0.55},
+      {"player_id":"nfl_patrick_mahomes","player_name":"Patrick Mahomes","stat":"passing_yards","line":300.5,"direction":"under","base_prob":0.53}
+    ]},
+    {"id":"fb-004","sport":"football","legs":[
+      {"player_id":"nfl_josh_allen","player_name":"Josh Allen","stat":"rushing_yards","line":34.5,"direction":"over","base_prob":0.54},
+      {"player_id":"nfl_travis_kelce","player_name":"Travis Kelce","stat":"receptions","line":6.5,"direction":"over","base_prob":0.55}
+    ]},
+    {"id":"fb-005","sport":"football","legs":[
+      {"player_id":"nfl_patrick_mahomes","player_name":"Patrick Mahomes","stat":"passing_touchdowns","line":2.5,"direction":"under","base_prob":0.58},
+      {"player_id":"nfl_christian_mccaffrey","player_name":"Christian McCaffrey","stat":"receptions","line":4.5,"direction":"over","base_prob":0.54}
+    ]},
+    {"id":"fb-006","sport":"football","legs":[
+      {"player_id":"nfl_stephon_diggs","player_name":"Stefon Diggs","stat":"receptions","line":6.5,"direction":"over","base_prob":0.53},
+      {"player_id":"nfl_josh_allen","player_name":"Josh Allen","stat":"interceptions","line":0.5,"direction":"under","base_prob":0.57}
+    ]},
+    {"id":"fb-007","sport":"football","legs":[
+      {"player_id":"nfl_christian_mccaffrey","player_name":"Christian McCaffrey","stat":"rushing_yards","line":84.5,"direction":"under","base_prob":0.54},
+      {"player_id":"nfl_travis_kelce","player_name":"Travis Kelce","stat":"receiving_yards","line":78.5,"direction":"under","base_prob":0.55}
+    ]},
+    {"id":"fb-008","sport":"football","legs":[
+      {"player_id":"nfl_patrick_mahomes","player_name":"Patrick Mahomes","stat":"passing_yards","line":310.5,"direction":"under","base_prob":0.56},
+      {"player_id":"nfl_stephon_diggs","player_name":"Stefon Diggs","stat":"receiving_yards","line":90.5,"direction":"under","base_prob":0.54}
+    ]},
+    {"id":"fb-009","sport":"football","legs":[
+      {"player_id":"nfl_josh_allen","player_name":"Josh Allen","stat":"passing_touchdowns","line":2.5,"direction":"under","base_prob":0.57},
+      {"player_id":"nfl_christian_mccaffrey","player_name":"Christian McCaffrey","stat":"rushing_yards","line":75.5,"direction":"over","base_prob":0.55}
+    ]},
+    {"id":"fb-010","sport":"football","legs":[
+      {"player_id":"nfl_stephon_diggs","player_name":"Stefon Diggs","stat":"receiving_yards","line":85.5,"direction":"over","base_prob":0.51},
+      {"player_id":"nfl_travis_kelce","player_name":"Travis Kelce","stat":"receptions","line":7.5,"direction":"under","base_prob":0.56}
+    ]},
+    {"id":"fb-011","sport":"football","legs":[
+      {"player_id":"nfl_patrick_mahomes","player_name":"Patrick Mahomes","stat":"passing_yards","line":295.5,"direction":"over","base_prob":0.52},
+      {"player_id":"nfl_christian_mccaffrey","player_name":"Christian McCaffrey","stat":"rushing_yards","line":82.5,"direction":"over","base_prob":0.53}
+    ]},
+    {"id":"fb-012","sport":"football","legs":[
+      {"player_id":"nfl_josh_allen","player_name":"Josh Allen","stat":"passing_yards","line":275.5,"direction":"under","base_prob":0.54},
+      {"player_id":"nfl_stephon_diggs","player_name":"Stefon Diggs","stat":"receptions","line":7.0,"direction":"under","base_prob":0.55}
+    ]},
+    {"id":"fb-013","sport":"football","legs":[
+      {"player_id":"nfl_travis_kelce","player_name":"Travis Kelce","stat":"receiving_yards","line":70.5,"direction":"over","base_prob":0.54},
+      {"player_id":"nfl_patrick_mahomes","player_name":"Patrick Mahomes","stat":"passing_touchdowns","line":2.5,"direction":"under","base_prob":0.56}
+    ]},
+    {"id":"fb-014","sport":"football","legs":[
+      {"player_id":"nfl_josh_allen","player_name":"Josh Allen","stat":"rushing_yards","line":38.5,"direction":"under","base_prob":0.55},
+      {"player_id":"nfl_christian_mccaffrey","player_name":"Christian McCaffrey","stat":"receptions","line":5.5,"direction":"under","base_prob":0.54}
+    ]},
+    {"id":"fb-015","sport":"football","legs":[
+      {"player_id":"nfl_stephon_diggs","player_name":"Stefon Diggs","stat":"receiving_yards","line":88.5,"direction":"under","base_prob":0.55},
+      {"player_id":"nfl_patrick_mahomes","player_name":"Patrick Mahomes","stat":"passing_yards","line":305.5,"direction":"under","base_prob":0.53}
+    ]}
+  ]
+}
