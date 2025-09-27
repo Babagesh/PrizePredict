@@ -292,60 +292,103 @@ function Header({ activeTab, setActiveTab }) {
 }
 
 function TemplatesView({ sport, templates, loading, addTemplate, updateTemplates }) {
+  const [flippedCards, setFlippedCards] = useState(new Set())
+
+  const toggleCardFlip = (cardId) => {
+    setFlippedCards(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId)
+      } else {
+        newSet.add(cardId)
+      }
+      return newSet
+    })
+  }
+
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
       <h3 className="section-title">{capitalize(sport)} Player Markets</h3>
       {loading && <div className="empty-label">Loading...</div>}
       {(!templates || templates.length === 0) && !loading && <div className="empty-label">No markets</div>}
       <div className="panels-grid">
-        {templates.map(m => (
-          <div key={m.id} className="parlay-card">
-            <div className="parlay-card-header">
-              <strong>{shortName(m.player_name)}</strong>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                <select
-                  value={m.selectedStat}
-                  onChange={e => {
-                    const newStat = e.target.value
-                    updateTemplates(prev => ({
-                      ...prev,
-                      [sport]: prev[sport].map(x => {
-                        if (x.id !== m.id) return x
-                        const opt = x.statOptions.find(o => o.stat === newStat)
-                        const firstLine = opt.lines[0]
-                        return { ...x, selectedStat: newStat, selectedLine: firstLine }
-                      })
-                    }))
-                  }}
-                  style={{ flex: 1, padding: '4px 6px', background: '#273038', color: 'var(--text)', border: '1px solid #38424d', borderRadius: 4, fontSize: '0.65rem' }}
-                >
-                  {m.statOptions.map(o => <option key={o.stat} value={o.stat}>{shortStat(o.stat)}</option>)}
-                </select>
-                <span style={{ width: 60, textAlign: 'right', color: '#ffc107', fontSize: '0.65rem' }}>{m.selectedLine}</span>
-                <select
-                  value={m.direction}
-                  onChange={e => {
-                    const dir = e.target.value
-                    updateTemplates(prev => ({
-                      ...prev,
-                      [sport]: prev[sport].map(x => x.id === m.id ? { ...x, direction: dir } : x)
-                    }))
-                  }}
-                  style={{ width: 62, padding: '4px 6px', background: '#273038', color: 'var(--text)', border: '1px solid #38424d', borderRadius: 4, fontSize: '0.65rem' }}
-                >
-                  <option value="over">Over</option>
-                  <option value="under">Under</option>
-                </select>
+        {templates.map(m => {
+          const isFlipped = flippedCards.has(m.id)
+          return (
+            <div 
+              key={m.id} 
+              className={`parlay-card ${isFlipped ? 'flipped' : ''}`}
+              onClick={() => toggleCardFlip(m.id)}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="card-inner">
+                {/* Front side - original betting interface */}
+                <div className="card-front">
+                  <div className="parlay-card-header">
+                    <strong>{shortName(m.player_name)}</strong>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                      <select
+                        value={m.selectedStat}
+                        onChange={e => {
+                          e.stopPropagation() // Prevent card flip when clicking dropdown
+                          const newStat = e.target.value
+                          updateTemplates(prev => ({
+                            ...prev,
+                            [sport]: prev[sport].map(x => {
+                              if (x.id !== m.id) return x
+                              const opt = x.statOptions.find(o => o.stat === newStat)
+                              const firstLine = opt.lines[0]
+                              return { ...x, selectedStat: newStat, selectedLine: firstLine }
+                            })
+                          }))
+                        }}
+                        style={{ flex: 1, padding: '4px 6px', background: '#273038', color: 'var(--text)', border: '1px solid #38424d', borderRadius: 4, fontSize: '0.65rem' }}
+                      >
+                        {m.statOptions.map(o => <option key={o.stat} value={o.stat}>{shortStat(o.stat)}</option>)}
+                      </select>
+                      <span style={{ width: 60, textAlign: 'right', color: '#ffc107', fontSize: '0.65rem' }}>{m.selectedLine}</span>
+                      <select
+                        value={m.direction}
+                        onChange={e => {
+                          e.stopPropagation() // Prevent card flip when clicking dropdown
+                          const dir = e.target.value
+                          updateTemplates(prev => ({
+                            ...prev,
+                            [sport]: prev[sport].map(x => x.id === m.id ? { ...x, direction: dir } : x)
+                          }))
+                        }}
+                        style={{ width: 62, padding: '4px 6px', background: '#273038', color: 'var(--text)', border: '1px solid #38424d', borderRadius: 4, fontSize: '0.65rem' }}
+                      >
+                        <option value="over">Over</option>
+                        <option value="under">Under</option>
+                      </select>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation() // Prevent card flip when clicking button
+                        addTemplate(mToTemplate(m))
+                      }}
+                      className="card-action-btn"
+                    >Add</button>
+                  </div>
+                </div>
+
+                {/* Back side - context/analysis */}
+                <div className="card-back">
+                  <div className="parlay-card-header">
+                    <strong>{shortName(m.player_name)}</strong>
+                  </div>
+                  <div className="context-content">
+                    <div className="context-placeholder">FILLER</div>
+                    <div className="context-subtitle">Analyst Context Coming Soon</div>
+                  </div>
+                </div>
               </div>
-              <button
-                onClick={() => addTemplate(mToTemplate(m))}
-                className="card-action-btn"
-              >Add</button>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
