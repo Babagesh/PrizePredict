@@ -133,7 +133,7 @@ div > button:hover { color: var(--text); background: var(--panel-alt); }
 /* Flip toggle button in card corner */
 .flip-toggle {
 	position: absolute;
-	top: 105px;
+	top: 110px;
 	right: 12px;
 	width: 26px;
 	height: 26px;
@@ -311,6 +311,62 @@ div > button:hover { color: var(--text); background: var(--panel-alt); }
 /* Fade-in animation */
 .fade-in { animation: fadeIn .35s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Custom Dropdowns - PrizePicks Style */
+.stat-dropdown, .direction-dropdown {
+	background: linear-gradient(135deg, var(--panel-alt), var(--panel));
+	color: var(--text);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-sm);
+	padding: 8px 12px;
+	font-size: 0.7rem;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	outline: none;
+	box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-dropdown {
+	flex: 1;
+	min-width: 0; /* Allow flex shrinking */
+}
+
+.direction-dropdown {
+	width: 75px;
+}
+
+.stat-dropdown:hover, .direction-dropdown:hover {
+	border-color: var(--accent);
+	box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.15);
+	transform: translateY(-1px);
+}
+
+.stat-dropdown:focus, .direction-dropdown:focus {
+	border-color: var(--accent);
+	box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.25);
+	transform: translateY(-1px);
+}
+
+.stat-dropdown option, .direction-dropdown option {
+	background: var(--panel);
+	color: var(--text);
+	padding: 8px;
+}
+
+/* Line Number Display */
+.line-number {
+	width: 60px;
+	text-align: right;
+	color: var(--accent);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.5px;
+	padding: 4px 8px;
+	background: rgba(var(--accent-rgb), 0.1);
+	border-radius: var(--radius-sm);
+	border: 1px solid rgba(var(--accent-rgb), 0.2);
+}
 
 /* Responsive tweaks */
 @media (max-width: 760px) {
