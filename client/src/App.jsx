@@ -419,17 +419,24 @@ function TemplatesView({ sport, templates, loading, addTemplate, updateTemplates
           const isLoadingNews = loadingNews.has(m.id)
           return (
             <div 
-              key={m.id} 
-              className={`parlay-card ${isFlipped ? 'flipped' : ''}`}
-              onClick={() => toggleCardFlip(m.id, m)}
-              style={{ cursor: 'pointer' }}
-            >
+                key={m.id} 
+                className={`parlay-card ${isFlipped ? 'flipped' : ''}`}
+              >
               <div className="card-inner">
-                {/* Front side - original betting interface */}
+                  {/* Front side - original betting interface */}
                 <div className="card-front">
-                  <div className="parlay-card-header">
-                    <strong>{shortName(m.player_name)}</strong>
-                  </div>
+                    <div className="parlay-card-header">
+                      <strong>{shortName(m.player_name)}</strong>
+                    </div>
+                    {/* Flip toggle (front) */}
+                    <button
+                      className="flip-toggle"
+                      onClick={(e) => { e.stopPropagation(); toggleCardFlip(m.id, m); }}
+                      aria-pressed={isFlipped}
+                      title="Show context"
+                    >
+                      ⤺
+                    </button>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                       <select
@@ -483,6 +490,15 @@ function TemplatesView({ sport, templates, loading, addTemplate, updateTemplates
                   <div className="parlay-card-header">
                     <strong>{shortName(m.player_name)}</strong>
                   </div>
+                  {/* Flip toggle (back) */}
+                  <button
+                    className="flip-toggle"
+                    onClick={(e) => { e.stopPropagation(); toggleCardFlip(m.id, m); }}
+                    aria-pressed={isFlipped}
+                    title="Hide context"
+                  >
+                    ⤺
+                  </button>
                   <div className="context-content">
                     {isLoadingNews ? (
                       <div className="context-loading">Loading news...</div>
