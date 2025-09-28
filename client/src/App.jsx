@@ -1,25 +1,14 @@
 import { useEffect, useState, useRef } from 'react'
 import './App.css'
 import { supabase } from './lib/supabaseClient'
+import { fetchPlayerNews } from './services/newsService'
 
 const API_BASE = 'http://localhost:8000'
 const USER_ID = 'demo_user'
 const SPORTS = ['basketball', 'soccer', 'football']
 
-// NewsAPI configuration
-const NEWS_API_KEY = '297e85e50ef74dd9b111f17d3c9ae8e1' // Replace with actual API key
-const NEWS_API_BASE = 'https://newsapi.org/v2/everything'
-
-// Preferred sports analysts
-const PREFERRED_ANALYSTS = [
-  'Adam Schefter', 'Ian Rapoport', 'Jay Glazer', 'Tom Pelissero', 'Field Yates', 'Chris Mortensen',
-  'Adrian Wojnarowski', 'Shams Charania', 'Marc Stein', 'Brian Windhorst', 'Zach Lowe', 'Ken Rosenthal',
-  'Jeff Passan', 'Jon Heyman', 'Buster Olney', 'Elliotte Friedman', 'Pierre LeBrun', 'Darren Dreger',
-  'Pete Thamel', 'Bruce Feldman', 'Jay Bilas', 'Stephen A. Smith', 'Colin Cowherd', 'Skip Bayless',
-  'Michael Wilbon', 'Tony Kornheiser'
-]
-
-// Imported mock templates JSON: RAW_TEMPLATES
+const newsAPI = import.meta.env.VITE_NEWS_API_KEY
+const openAPI = import.meta.env.VITE_OPEN_API_KEY
 
 async function fetchJSON(url, opts) { const res = await fetch(url, opts); if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() }
 
@@ -385,13 +374,24 @@ function TemplatesView({ sport, templates, loading, addTemplate, updateTemplates
   const fetchNewsForCard = async (cardId, market) => {
     setLoadingNews(prev => new Set(prev).add(cardId))
     try {
-      const news = await fetchPlayerNews(market.player_name, market.sport, market.selectedStat)
+      const news = await fetchPlayerNews(
+        market.player_name, 
+        market.sport, 
+        market.selectedStat,
+        newsAPI,
+        openAPI,
+        market.selectedLine
+      )
       setNewsData(prev => ({ ...prev, [cardId]: news }))
     } catch (error) {
       console.error('Error fetching news for card:', error)
       setNewsData(prev => ({ 
         ...prev, 
-        [cardId]: { headline: 'Error loading news', source: 'NewsAPI' } 
+        [cardId]: { 
+          headline: 'Error loading news', 
+          content: 'There was an error fetching news articles. Please try again later.',
+          source: 'NewsAPI' 
+        } 
       }))
     } finally {
       setLoadingNews(prev => {
@@ -484,6 +484,9 @@ function TemplatesView({ sport, templates, loading, addTemplate, updateTemplates
                     ) : news ? (
                       <div className="news-content">
                         <div className="news-headline">{news.headline}</div>
+                        {news.content && (
+                          <div className="news-content-text">{news.content}</div>
+                        )}
                         <div className="news-source">Source: {news.source}</div>
                         {news.url && (
                           <a href={news.url} target="_blank" rel="noopener noreferrer" className="news-link">
