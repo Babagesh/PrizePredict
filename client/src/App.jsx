@@ -3,7 +3,7 @@ import './App.css'
 import { supabase } from './lib/supabaseClient'
 import { fetchPlayerNews } from './services/newsService'
 
-const API_BASE = 'http://localhost:8000'
+const API_BASE = '/api'
 const USER_ID = 'demo_user'
 const SPORTS = ['basketball', 'soccer', 'football']
 
@@ -39,9 +39,9 @@ function App() {
   function startPolling() {
     const poll = async () => {
       try {
-        const s = await fetchJSON(`${API_BASE}/api/parlays/submitted?user_id=${USER_ID}`)
+        const s = await fetchJSON(`${API_BASE}/parlays/submitted?user_id=${USER_ID}`)
         setSubmitted(s)
-        const h = await fetchJSON(`${API_BASE}/api/parlays/history?user_id=${USER_ID}`)
+        const h = await fetchJSON(`${API_BASE}/parlays/history?user_id=${USER_ID}`)
         setHistory(h)
       } catch {}
     }
@@ -367,14 +367,14 @@ function App() {
   async function predict() {
     setLoading(l => ({ ...l, predict: true }))
     try {
-      const resp = await fetchJSON(`${API_BASE}/api/parlays/predict`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: USER_ID, count: 3, mix: true }) })
+      const resp = await fetchJSON(`${API_BASE}/parlays/predict`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: USER_ID, count: 3, mix: true }) })
       setRecommended(resp.recommendations || [])
     } catch { alert('Prediction failed') } finally { setLoading(l => ({ ...l, predict: false })) }
   }
 
   async function submitRecommended(r) {
     try {
-      await fetchJSON(`${API_BASE}/api/parlays/submit`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: USER_ID, source: 'prediction', legs: r.legs.map(l => ({ player_id: l.player_id, player_name: l.player_name, sport: l.sport, stat: l.stat, direction: l.direction, line: l.line, base_prob: l.base_prob })) }) })
+      await fetchJSON(`${API_BASE}/parlays/submit`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: USER_ID, source: 'prediction', legs: r.legs.map(l => ({ player_id: l.player_id, player_name: l.player_name, sport: l.sport, stat: l.stat, direction: l.direction, line: l.line, base_prob: l.base_prob })) }) })
       setActiveTab('history')
     } catch { alert('Submit failed') }
   }
