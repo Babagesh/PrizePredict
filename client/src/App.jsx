@@ -250,18 +250,36 @@ function App() {
         .from('history_parlays')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(200)
+        .limit(500)
       if (error) throw error
-      // Group rows by parlay submission timestamp bucket (we don't yet have a parlay id column)
-      // For now each row is a standalone historical leg; we'll present them as individual cards.
-      setHistory(data.map(r => ({
-        id: r.id,
-        created_at: r.created_at,
-        parlay_result: r.hit === true ? 'LEG_WIN' : (r.hit === false ? 'LEG_LOSS' : 'PENDING'),
-        legs: [r]
-      })))
+      const grouped = {}
+      for (const row of data) {
+        const gid = row.parlay_group_id || row.id
+        if (!grouped[gid]) grouped[gid] = { id: gid, created_at: row.created_at, legs: [] }
+        grouped[gid].legs.push(row)
+      }
+      const cards = Object.values(grouped).map(g => {
+        const anyMiss = g.legs.some(l => l.hit === false)
+        const allHit = g.legs.length > 0 && g.legs.every(l => l.hit === true)
+        let parlay_result = 'PENDING'
+        if (anyMiss) parlay_result = 'LOSS'; else if (allHit) parlay_result = 'WIN'
+        return { ...g, parlay_result }
+      }).sort((a,b)=> new Date(b.created_at) - new Date(a.created_at))
+      setHistory(cards)
     } catch (e) {
       console.error('Failed to load history', e)
+    }
+  }
+
+  async function clearHistory() {
+    if (!window.confirm('Clear all parlay history? This cannot be undone.')) return
+    try {
+      const { error } = await supabase.from('history_parlays').delete().neq('id','00000000-0000-0000-0000-000000000000')
+      if (error) throw error
+      setHistory([])
+    } catch (e) {
+      console.error('Failed to clear history', e)
+      alert('Failed to clear history (check RLS delete policy).')
     }
   }
 
@@ -283,8 +301,7 @@ function App() {
       const hit = Math.random() < p
       return { ...leg, hit, simulated_prob: p }
     })
-    const win = resolvedLegs.every(l => l.hit)
-    // Persist each leg to history_parlays (no parlay-level aggregation column yet)
+    const parlayGroupId = 'pg-' + Date.now() + '-' + Math.random().toString(36).slice(2,8)
     const inserts = resolvedLegs.map(l => ({
       sport: l.sport,
       player_id: l.player_id,
@@ -294,6 +311,7 @@ function App() {
       base_prob: l.base_prob,
       hit: l.hit,
       settled_at: new Date().toISOString(),
+      parlay_group_id: parlayGroupId,
       source: 'sim'
     }))
     try {
@@ -337,7 +355,7 @@ function App() {
           updateTemplates={setTemplates}
         />
       )}
-      {activeTab === 'history' && (<HistoryView history={history} />)}
+  {activeTab === 'history' && (<HistoryView history={history} onClear={clearHistory} reload={loadHistory} />)}
       {activeTab === 'predict' && (<PredictView recommendations={recommended} submitRecommended={submitRecommended} loading={loading.predict} onPredict={predict} />)}
       {activeTab === 'submitted' && (<BuilderView builder={builder} updateLeg={updateBuilderLeg} removeLeg={removeBuilderLeg} finalizeParlay={finalizeParlay} MIN_LEGS={MIN_LEGS} MAX_LEGS={MAX_LEGS} />)}
     </div>
@@ -585,10 +603,16 @@ function BuilderView({ builder, updateLeg, removeLeg, finalizeParlay, MIN_LEGS, 
   )
 }
 
-function HistoryView({ history }) {
+function HistoryView({ history, onClear, reload }) {
   return (
     <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-      <h3 className="section-title">History</h3>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <h3 className="section-title" style={{ margin: 0 }}>History</h3>
+        <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <button onClick={reload} className="btn-accent" style={{ fontSize: '0.6rem' }}>Refresh</button>
+          <button onClick={onClear} className="btn-danger" style={{ fontSize: '0.6rem', background:'#5a1f1f', border:'1px solid #7a2a2a' }}>Clear All</button>
+        </div>
+      </div>
       <ParlayGrid rows={history} emptyLabel="No history" showOutcome outcomeStyling showSimulated />
     </div>
   )
