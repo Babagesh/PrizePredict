@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import './App.css'
-import RAW_TEMPLATES from './assets/parlayTemplates.json'
+import { supabase } from './lib/supabaseClient'
 
 const API_BASE = 'http://localhost:8000'
 const USER_ID = 'demo_user'
@@ -95,42 +95,55 @@ function App() {
   async function loadTemplates(sport) {
     if (!SPORTS.includes(sport) || templates[sport].length) return
     setLoading(l => ({ ...l, templates: true }))
-    let raw = []
     try {
-      const data = await fetchJSON(`${API_BASE}/api/parlays/templates?sport=${sport}`)
-      raw = data.items || data || []
-    } catch {
-      raw = RAW_TEMPLATES[sport] || []
-    } finally {
-      // Detect new per-player schema (presence of markets) and map directly; otherwise aggregate legacy multi-leg templates
-      let markets
-      if (raw.length && raw[0].markets) {
-        markets = raw.map(p => {
-          const statKeys = Object.keys(p.markets)
-          const statOptions = statKeys.slice(0,2).map(k => {
-            const v = p.markets[k]
-            // Normalize: if scalar, wrap into single-element array for UI; if array keep
-            const arr = Array.isArray(v) ? v : [v]
-            return { stat: k, lines: arr }
-          })
-          const selectedStat = statOptions[0]?.stat || null
-          const selectedLine = statOptions[0]?.lines[0] || null
-          return {
-            id: p.id,
-            player_id: p.player_id,
-            player_name: p.player_name,
-            sport: p.sport || sport,
-            statOptions,
-            selectedStat,
-            selectedLine,
-            direction: 'over',
-            base_prob_map: p.base_prob || {}
+      const { data, error } = await supabase
+        .from('active_parlays')
+        .select('*')
+        .eq('sport', sport)
+        .order('player_name', { ascending: true })
+
+      if (error) throw error
+
+      // Group rows by player and build stat options (limit to first two stats)
+      const grouped = {}
+      for (const r of data) {
+        if (!grouped[r.player_id]) {
+          grouped[r.player_id] = {
+            player_id: r.player_id,
+            player_name: r.player_name,
+            sport: r.sport,
+            stats: {},
+            base_prob_map: {}
           }
-        })
-      } else {
-        markets = buildPlayerMarkets(raw, sport)
+        }
+        if (!grouped[r.player_id].stats[r.stat]) grouped[r.player_id].stats[r.stat] = new Set()
+        grouped[r.player_id].stats[r.stat].add(r.line)
+        if (r.base_prob != null) grouped[r.player_id].base_prob_map[r.stat] = r.base_prob
       }
+
+      const markets = Object.values(grouped).map(g => {
+        const statKeys = Object.keys(g.stats).slice(0,2)
+        const statOptions = statKeys.map(k => ({
+          stat: k,
+            lines: [...g.stats[k]].sort((a,b)=>a-b)
+        }))
+        return {
+          id: g.player_id,
+          player_id: g.player_id,
+          player_name: g.player_name,
+          sport: g.sport,
+          statOptions,
+          selectedStat: statOptions[0]?.stat || null,
+          selectedLine: statOptions[0]?.lines[0] || null,
+          direction: 'over',
+          base_prob_map: g.base_prob_map
+        }
+      })
+
       setTemplates(prev => ({ ...prev, [sport]: markets }))
+    } catch (e) {
+      console.error('Failed to load templates from Supabase', e)
+    } finally {
       setLoading(l => ({ ...l, templates: false }))
     }
   }
