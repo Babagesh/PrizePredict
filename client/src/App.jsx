@@ -15,6 +15,8 @@ async function fetchJSON(url, opts) { const res = await fetch(url, opts); if (!r
 function App() {
   const [activeTab, setActiveTab] = useState('basketball')
   const [templates, setTemplates] = useState({ basketball: [], soccer: [], football: [] })
+  // Track markets already used in submitted history (player_id+stat pairs) so we can hide them client-side
+  const [usedMarketKeys, setUsedMarketKeys] = useState(new Set())
   const [submitted, setSubmitted] = useState([]) // (legacy: unused for new flow)
   const [history, setHistory] = useState([])
   const [recommended, setRecommended] = useState([])
@@ -25,7 +27,7 @@ function App() {
   const pollRef = useRef(null)
   const resolveTimers = useRef({}) // legacy (no longer used after refactor)
 
-  useEffect(() => { loadTemplates(activeTab) }, [activeTab])
+  useEffect(() => { loadTemplates(activeTab) }, [activeTab, usedMarketKeys])
   useEffect(() => { startPolling(); return () => stopPolling() }, [])
   useEffect(() => {
     if (activeTab === 'history' && history.length === 0) {
@@ -47,8 +49,22 @@ function App() {
   }
   function stopPolling() { if (pollRef.current) clearInterval(pollRef.current) }
 
+  // Build a key for (player, stat) combo
+  const marketKey = (player_id, stat) => `${player_id}::${stat}`
+
+  // Recompute used markets whenever history changes
+  useEffect(() => {
+    const next = new Set()
+    for (const card of history) {
+      for (const leg of card.legs || []) {
+        if (leg.player_id && leg.stat) next.add(marketKey(leg.player_id, leg.stat))
+      }
+    }
+    setUsedMarketKeys(next)
+  }, [history])
+
   async function loadTemplates(sport) {
-    if (!SPORTS.includes(sport) || templates[sport].length) return
+    if (!SPORTS.includes(sport)) return
     setLoading(l => ({ ...l, templates: true }))
     try {
       const { data, error } = await supabase
@@ -94,8 +110,25 @@ function App() {
           base_prob_map: g.base_prob_map
         }
       })
+      // Filter out any markets whose (player, chosen stat) is already used; we allow alternative stat options if unused
+      const filtered = markets.filter(m => {
+        if (!m.selectedStat) return true
+        const key = marketKey(m.player_id, m.selectedStat)
+        return !usedMarketKeys.has(key)
+      }).map(m => {
+        // Also filter statOptions to those not used; pick a new selectedStat if original is hidden
+        const allowedOptions = m.statOptions.filter(o => !usedMarketKeys.has(marketKey(m.player_id, o.stat)))
+        if (allowedOptions.length === 0) return null // drop entire card if all options used
+        let selectedStat = m.selectedStat
+        let selectedLine = m.selectedLine
+        if (usedMarketKeys.has(marketKey(m.player_id, selectedStat))) {
+          selectedStat = allowedOptions[0].stat
+          selectedLine = allowedOptions[0].lines[0]
+        }
+        return { ...m, statOptions: allowedOptions, selectedStat, selectedLine }
+      }).filter(Boolean)
 
-      setTemplates(prev => ({ ...prev, [sport]: markets }))
+      setTemplates(prev => ({ ...prev, [sport]: filtered }))
     } catch (e) {
       console.error('Failed to load templates from Supabase', e)
     } finally {
@@ -277,6 +310,9 @@ function App() {
       const { error } = await supabase.from('history_parlays').delete().neq('id','00000000-0000-0000-0000-000000000000')
       if (error) throw error
       setHistory([])
+      // After clearing, repopulate templates so previously used markets reappear
+      setTemplates({ basketball: [], soccer: [], football: [] })
+      setUsedMarketKeys(new Set())
     } catch (e) {
       console.error('Failed to clear history', e)
       alert('Failed to clear history (check RLS delete policy).')
@@ -324,6 +360,8 @@ function App() {
     setBuilder([])
     await loadHistory()
     setActiveTab('history')
+    // Force templates to reload to hide just-used markets
+    setTemplates(prev => ({ ...prev, [resolvedLegs[0].sport]: [] }))
   }
 
   async function predict() {
