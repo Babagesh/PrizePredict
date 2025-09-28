@@ -14,7 +14,7 @@ async function fetchJSON(url, opts) { const res = await fetch(url, opts); if (!r
 
 // Function to fetch news articles for a player
 async function fetchPlayerNews(playerName, sport, stat) {
-  if (!NEWS_API_KEY || NEWS_API_KEY === 'YOUR_NEWS_API_KEY_HERE') {
+  if (!NEWS_API_KEY) {
     return { headline: 'API Key Required', source: 'NewsAPI' }
   }
 
@@ -67,6 +67,12 @@ function App() {
 
   useEffect(() => { loadTemplates(activeTab) }, [activeTab])
   useEffect(() => { startPolling(); return () => stopPolling() }, [])
+  useEffect(() => {
+    if (activeTab === 'history' && history.length === 0) {
+      // Try to load existing historical legs
+      if (typeof loadHistory === 'function') loadHistory()
+    }
+  }, [activeTab])
 
   function startPolling() {
     const poll = async () => {
@@ -278,7 +284,28 @@ function App() {
     setBuilder(prev => prev.filter((_, i) => i !== idx))
   }
 
-  function finalizeParlay() {
+  async function loadHistory() {
+    try {
+      const { data, error } = await supabase
+        .from('history_parlays')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(200)
+      if (error) throw error
+      // Group rows by parlay submission timestamp bucket (we don't yet have a parlay id column)
+      // For now each row is a standalone historical leg; we'll present them as individual cards.
+      setHistory(data.map(r => ({
+        id: r.id,
+        created_at: r.created_at,
+        parlay_result: r.hit === true ? 'LEG_WIN' : (r.hit === false ? 'LEG_LOSS' : 'PENDING'),
+        legs: [r]
+      })))
+    } catch (e) {
+      console.error('Failed to load history', e)
+    }
+  }
+
+  async function finalizeParlay() {
     if (builder.length < MIN_LEGS) {
       alert(`Need at least ${MIN_LEGS} legs to submit`)
       return
@@ -297,9 +324,27 @@ function App() {
       return { ...leg, hit, simulated_prob: p }
     })
     const win = resolvedLegs.every(l => l.hit)
-    const parlay = { id: `parlay-${Date.now()}`, created_at: Date.now(), parlay_result: win ? 'WIN' : 'LOSS', legs: resolvedLegs }
-    setHistory(h => [parlay, ...h])
+    // Persist each leg to history_parlays (no parlay-level aggregation column yet)
+    const inserts = resolvedLegs.map(l => ({
+      sport: l.sport,
+      player_id: l.player_id,
+      player_name: l.player_name,
+      stat: l.stat,
+      line: l.line,
+      base_prob: l.base_prob,
+      hit: l.hit,
+      settled_at: new Date().toISOString(),
+      source: 'sim'
+    }))
+    try {
+      const { error } = await supabase.from('history_parlays').insert(inserts)
+      if (error) throw error
+    } catch (e) {
+      console.error('Failed to persist history legs', e)
+      alert('Failed saving history to backend')
+    }
     setBuilder([])
+    await loadHistory()
     setActiveTab('history')
   }
 
