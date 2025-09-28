@@ -383,6 +383,7 @@ function App() {
 
   return (
     <div className="layout-root fade-in">
+      <h1 className="app-title">Playbook</h1>
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
       {SPORTS.includes(activeTab) && (
         <TemplatesView
@@ -496,6 +497,7 @@ function TemplatesView({ sport, templates, loading, addTemplate, updateTemplates
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                       <select
+                        className="stat-dropdown"
                         value={m.selectedStat}
                         onChange={e => {
                           e.stopPropagation() // Prevent card flip when clicking dropdown
@@ -510,12 +512,12 @@ function TemplatesView({ sport, templates, loading, addTemplate, updateTemplates
                             })
                           }))
                         }}
-                        style={{ flex: 1, padding: '4px 6px', background: '#273038', color: 'var(--text)', border: '1px solid #38424d', borderRadius: 4, fontSize: '0.65rem' }}
                       >
                         {m.statOptions.map(o => <option key={o.stat} value={o.stat}>{shortStat(o.stat)}</option>)}
                       </select>
-                      <span style={{ width: 60, textAlign: 'right', color: '#ffc107', fontSize: '0.65rem' }}>{m.selectedLine}</span>
+                      <span className="line-number">{m.selectedLine}</span>
                       <select
+                        className="direction-dropdown"
                         value={m.direction}
                         onChange={e => {
                           e.stopPropagation() // Prevent card flip when clicking dropdown
@@ -525,7 +527,6 @@ function TemplatesView({ sport, templates, loading, addTemplate, updateTemplates
                             [sport]: prev[sport].map(x => x.id === m.id ? { ...x, direction: dir } : x)
                           }))
                         }}
-                        style={{ width: 62, padding: '4px 6px', background: '#273038', color: 'var(--text)', border: '1px solid #38424d', borderRadius: 4, fontSize: '0.65rem' }}
                       >
                         <option value="over">Over</option>
                         <option value="under">Under</option>
@@ -793,6 +794,22 @@ function ParlayGrid({ rows, emptyLabel = 'Empty', actionLabel, onAction, highlig
 
 function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1) }
 function shortName(n) { if (!n) return ''; const p = n.split(' '); return p.length > 1 ? p[0][0] + '. ' + p.slice(1).join(' ') : n }
-function shortStat(stat) { switch (stat) { case 'passing_yards': return 'PassY'; case 'rushing_yards': return 'RushY'; case 'receiving_yards': return 'RecY'; default: return stat } }
+function shortStat(stat) { 
+  const statMap = {
+    'passing_yards': 'Passing Yards',
+    'rushing_yards': 'Rushing Yards', 
+    'receiving_yards': 'Receiving Yards',
+    'three_pointers_made': 'Three Pointers',
+    'assists': 'Assists',
+    'rebounds': 'Rebounds',
+    'points': 'Points',
+    'blocks': 'Blocks',
+    'steals': 'Steals',
+    'goals': 'Goals',
+    'shots_on_target': 'Shots On Target',
+    'chances_created': 'Chances Created'
+  };
+  return statMap[stat] || stat.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+}
 
 export default App
