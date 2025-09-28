@@ -12,46 +12,6 @@ const openAPI = import.meta.env.VITE_OPEN_API_KEY
 
 async function fetchJSON(url, opts) { const res = await fetch(url, opts); if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() }
 
-// Function to fetch news articles for a player
-async function fetchPlayerNews(playerName, sport, stat) {
-  if (!NEWS_API_KEY) {
-    return { headline: 'API Key Required', source: 'NewsAPI' }
-  }
-
-  try {
-    // Create search query with player name, sport, and stat
-    const query = `${playerName} ${sport} ${stat}`.replace(/_/g, ' ')
-    
-    // First try to find articles from preferred analysts
-    const analystQuery = PREFERRED_ANALYSTS.map(analyst => `"${analyst}"`).join(' OR ')
-    const preferredUrl = `${NEWS_API_BASE}?q=${encodeURIComponent(query)}&sources=${analystQuery}&apiKey=${NEWS_API_KEY}&pageSize=5&sortBy=relevancy`
-    
-    let response = await fetch(preferredUrl)
-    let data = await response.json()
-    
-    // If no results from preferred analysts, try general search
-    if (!data.articles || data.articles.length === 0) {
-      const generalUrl = `${NEWS_API_BASE}?q=${encodeURIComponent(query)}&apiKey=${NEWS_API_KEY}&pageSize=5&sortBy=relevancy`
-      response = await fetch(generalUrl)
-      data = await response.json()
-    }
-    
-    if (data.articles && data.articles.length > 0) {
-      const article = data.articles[0]
-      return {
-        headline: article.title,
-        source: article.source.name,
-        url: article.url
-      }
-    }
-    
-    return { headline: 'No recent news found', source: 'NewsAPI' }
-  } catch (error) {
-    console.error('Error fetching news:', error)
-    return { headline: 'Error loading news', source: 'NewsAPI' }
-  }
-}
-
 function App() {
   const [activeTab, setActiveTab] = useState('basketball')
   const [templates, setTemplates] = useState({ basketball: [], soccer: [], football: [] })
