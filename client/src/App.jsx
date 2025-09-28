@@ -345,6 +345,7 @@ function App() {
 
   return (
     <div className="layout-root fade-in">
+      <h1 className="app-title">Playbook</h1>
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
       {SPORTS.includes(activeTab) && (
         <TemplatesView

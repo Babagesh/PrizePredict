@@ -78,6 +78,15 @@ div > button:hover { color: var(--text); background: var(--panel-alt); }
 	gap: 1.25rem;
 }
 
+.app-title {
+	margin: 0 0 6px;
+	font-size: 2.4rem;
+	font-weight: 900;
+	color: #fff;
+	letter-spacing: 1px;
+	text-shadow: 0 4px 18px rgba(var(--accent-rgb), 0.12);
+}
+
 .panels-grid {
 	display: grid;
 	gap: 16px;
