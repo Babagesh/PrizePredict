@@ -2,13 +2,17 @@ import { useEffect, useState, useRef } from 'react'
 import './App.css'
 import { supabase } from './lib/supabaseClient'
 
+
 const API_BASE = 'http://localhost:8000'
 const USER_ID = 'demo_user'
 const SPORTS = ['basketball', 'soccer', 'football']
 
-// NewsAPI configuration
-const NEWS_API_KEY = '297e85e50ef74dd9b111f17d3c9ae8e1' // Replace with actual API key
+// NewsAPI configuration (loaded from Vite env). Do NOT commit real keys without rotation.
+const NEWS_API_KEY = import.meta.env.VITE_NEWS_API
 const NEWS_API_BASE = 'https://newsapi.org/v2/everything'
+if (!NEWS_API_KEY) {
+  console.warn('[NewsAPI] VITE_NEWS_API is not defined. News headlines will show placeholder messages.')
+}
 
 // Preferred sports analysts
 const PREFERRED_ANALYSTS = [
@@ -25,7 +29,7 @@ async function fetchJSON(url, opts) { const res = await fetch(url, opts); if (!r
 
 // Function to fetch news articles for a player
 async function fetchPlayerNews(playerName, sport, stat) {
-  if (!NEWS_API_KEY || NEWS_API_KEY === 'YOUR_NEWS_API_KEY_HERE') {
+  if (!NEWS_API_KEY) {
     return { headline: 'API Key Required', source: 'NewsAPI' }
   }
 
