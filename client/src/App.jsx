@@ -54,21 +54,25 @@ function App() {
       if (raw.length && raw[0].markets) {
         markets = raw.map(p => {
           const statKeys = Object.keys(p.markets)
-          // unify shape with previous market object expected by UI
-            const statOptions = statKeys.slice(0,2).map(k => ({ stat: k, lines: p.markets[k] }))
-            const selectedStat = statOptions[0]?.stat || null
-            const selectedLine = statOptions[0]?.lines[0] || null
-            return {
-              id: p.id,
-              player_id: p.player_id,
-              player_name: p.player_name,
-              sport: p.sport || sport,
-              statOptions,
-              selectedStat,
-              selectedLine,
-              direction: 'over',
-              base_prob_map: p.base_prob || {}
-            }
+          const statOptions = statKeys.slice(0,2).map(k => {
+            const v = p.markets[k]
+            // Normalize: if scalar, wrap into single-element array for UI; if array keep
+            const arr = Array.isArray(v) ? v : [v]
+            return { stat: k, lines: arr }
+          })
+          const selectedStat = statOptions[0]?.stat || null
+          const selectedLine = statOptions[0]?.lines[0] || null
+          return {
+            id: p.id,
+            player_id: p.player_id,
+            player_name: p.player_name,
+            sport: p.sport || sport,
+            statOptions,
+            selectedStat,
+            selectedLine,
+            direction: 'over',
+            base_prob_map: p.base_prob || {}
+          }
         })
       } else {
         markets = buildPlayerMarkets(raw, sport)
