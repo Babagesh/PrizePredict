@@ -99,10 +99,68 @@ values
 ('football','fbp14','Amon-Ra St. Brown','receiving_yards',78.5,0.54,'{"id":"fb-014","stat":"receiving_yards"}'),
 ('football','fbp14','Amon-Ra St. Brown','receptions',6.5,0.54,'{"id":"fb-014","stat":"receptions"}'),
 ('football','fbp15','Lamar Jackson','passing_touchdowns',2.0,0.55,'{"id":"fb-015","stat":"passing_touchdowns"}'),
-('football','fbp15','Lamar Jackson','rushing_yards',62.5,0.55,'{"id":"fb-015","stat":"rushing_yards"}');
+('football','fbp15','Lamar Jackson','rushing_yards',62.5,0.55,'{"id":"fb-015","stat":"rushing_yards"}')
+ON CONFLICT ON CONSTRAINT active_parlays_unique DO NOTHING;
 
 -- Optional: prevent duplicates on re-run (example pattern)
 -- delete from public.active_parlays a using (
 --   select player_id, stat, row_number() over (partition by player_id, stat order by created_at) rn
 --   from public.active_parlays
 -- ) d where a.player_id=d.player_id and a.stat=d.stat and d.rn > 1;
+
+-- Additional repeats and players to reach 20 players per sport and add varied lines
+-- Ensure unique (player_id, stat, line)
+
+-- Basketball repeats (existing players with new lines)
+insert into public.active_parlays (sport, player_id, player_name, stat, line, base_prob, raw_markets) values
+('basketball','bbp1','Jayson Tatum','points',26.5,0.56,'{"id":"bb-001","stat":"points","variant":"rep1"}'),
+('basketball','bbp1','Jayson Tatum','points',28.5,0.54,'{"id":"bb-001","stat":"points","variant":"rep2"}'),
+('basketball','bbp2','Giannis Antetokounmpo','rebounds',10.5,0.56,'{"id":"bb-002","stat":"rebounds","variant":"rep1"}'),
+('basketball','bbp6','LeBron James','assists',6.5,0.55,'{"id":"bb-006","stat":"assists","variant":"rep1"}'),
+('basketball','bbp7','Kevin Durant','three_pointers_made',3.0,0.54,'{"id":"bb-007","stat":"three_pointers_made","variant":"rep1"}')
+ON CONFLICT ON CONSTRAINT active_parlays_unique DO NOTHING;
+
+-- Basketball new players (to approach/ensure 20 unique players)
+insert into public.active_parlays (sport, player_id, player_name, stat, line, base_prob, raw_markets) values
+('basketball','bbp16','Devin Booker','points',27.0,0.54,'{"id":"bb-016","stat":"points"}'),
+('basketball','bbp17','Kawhi Leonard','rebounds',6.5,0.52,'{"id":"bb-017","stat":"rebounds"}'),
+('basketball','bbp18','Paul George','three_pointers_made',3.0,0.52,'{"id":"bb-018","stat":"three_pointers_made"}'),
+('basketball','bbp19','Ja Morant','assists',7.0,0.53,'{"id":"bb-019","stat":"assists"}'),
+('basketball','bbp20','Jimmy Butler','points',23.5,0.53,'{"id":"bb-020","stat":"points"}')
+ON CONFLICT ON CONSTRAINT active_parlays_unique DO NOTHING;
+
+-- Soccer repeats
+insert into public.active_parlays (sport, player_id, player_name, stat, line, base_prob, raw_markets) values
+('soccer','scp1','Erling Haaland','goals',1.1,0.57,'{"id":"sc-001","stat":"goals","variant":"rep1"}'),
+('soccer','scp2','Lionel Messi','chances_created',3.5,0.58,'{"id":"sc-002","stat":"chances_created","variant":"rep1"}'),
+('soccer','scp3','Kylian Mbappé','shots_on_target',3.0,0.56,'{"id":"sc-003","stat":"shots_on_target","variant":"rep1"}'),
+('soccer','scp4','Harry Kane','shots_on_target',2.0,0.55,'{"id":"sc-004","stat":"shots_on_target","variant":"rep1"}'),
+('soccer','scp5','Kevin De Bruyne','assists',0.6,0.56,'{"id":"sc-005","stat":"assists","variant":"rep1"}')
+ON CONFLICT ON CONSTRAINT active_parlays_unique DO NOTHING;
+
+-- Soccer new players
+insert into public.active_parlays (sport, player_id, player_name, stat, line, base_prob, raw_markets) values
+('soccer','scp16','Bruno Fernandes','chances_created',3.0,0.55,'{"id":"sc-016","stat":"chances_created"}'),
+('soccer','scp17','Sadio Mané','shots_on_target',1.5,0.53,'{"id":"sc-017","stat":"shots_on_target"}'),
+('soccer','scp18','Karim Adeyemi','goals',0.5,0.52,'{"id":"sc-018","stat":"goals"}'),
+('soccer','scp19','Bukayo Saka','assists',0.5,0.53,'{"id":"sc-019","stat":"assists"}'),
+('soccer','scp20','Rodrygo','shots_on_target',1.5,0.52,'{"id":"sc-020","stat":"shots_on_target"}')
+ON CONFLICT ON CONSTRAINT active_parlays_unique DO NOTHING;
+
+-- Football repeats
+insert into public.active_parlays (sport, player_id, player_name, stat, line, base_prob, raw_markets) values
+('football','fbp1','Patrick Mahomes','passing_yards',295.5,0.56,'{"id":"fb-001","stat":"passing_yards","variant":"rep1"}'),
+('football','fbp2','Josh Allen','rushing_yards',45.5,0.54,'{"id":"fb-002","stat":"rushing_yards","variant":"rep1"}'),
+('football','fbp3','Joe Burrow','passing_touchdowns',2.5,0.55,'{"id":"fb-003","stat":"passing_touchdowns","variant":"rep1"}'),
+('football','fbp4','Justin Jefferson','receptions',7.5,0.56,'{"id":"fb-004","stat":"receptions","variant":"rep1"}'),
+('football','fbp5','Derrick Henry','rushing_attempts',23.5,0.54,'{"id":"fb-005","stat":"rushing_attempts","variant":"rep1"}')
+ON CONFLICT ON CONSTRAINT active_parlays_unique DO NOTHING;
+
+-- Football new players
+insert into public.active_parlays (sport, player_id, player_name, stat, line, base_prob, raw_markets) values
+('football','fbp16','Justin Herbert','passing_yards',280.5,0.54,'{"id":"fb-016","stat":"passing_yards"}'),
+('football','fbp17','JaMarr Chase','receiving_yards',88.5,0.55,'{"id":"fb-017","stat":"receiving_yards"}'),
+('football','fbp18','George Kittle','receptions',5.5,0.54,'{"id":"fb-018","stat":"receptions"}'),
+('football','fbp19','Nick Chubb','rushing_yards',92.5,0.55,'{"id":"fb-019","stat":"rushing_yards"}'),
+('football','fbp20','CeeDee Lamb','receiving_yards',86.5,0.54,'{"id":"fb-020","stat":"receiving_yards"}')
+ON CONFLICT ON CONSTRAINT active_parlays_unique DO NOTHING;

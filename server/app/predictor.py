@@ -156,10 +156,10 @@ def assemble_parlays(scored: List[Tuple[LegCandidate, float, List[str]]],
                      desired: int = 3,
                      min_legs: int = 2,
                      max_legs: int = 6) -> List[ParlayRecommendation]:
-    # Filter out any leg where exact (player_id, stat) already in history
+    # Filter out any leg where exact (player_id, stat, line) already in history
     filtered: List[Tuple[LegCandidate, float, List[str]]] = []
     for leg, sc, rationale in scored:
-        key = f"{leg.player_id}::{leg.stat}"
+        key = f"{leg.player_id}::{leg.stat}::{leg.line}"
         if key in already_used_keys:
             continue
         filtered.append((leg, sc, rationale))
@@ -214,7 +214,10 @@ def generate_recommendations(user_id: str, count: int = 3) -> Dict[str, Any]:
     legs = build_leg_candidates(active_df)
     hist_features = compute_history_features(history_df)
     prefs = compute_user_preferences(history_df)
-    already_used = set(f"{r.get('player_id')}::{r.get('stat')}" for _, r in history_df.iterrows())
+    already_used = set(
+        f"{r.get('player_id')}::{r.get('stat')}::{r.get('line')}" for _, r in history_df.iterrows()
+        if r.get('player_id') is not None and r.get('stat') is not None and r.get('line') is not None
+    )
 
     scored: List[Tuple[LegCandidate, float, List[str]]] = []
     for leg in legs:
