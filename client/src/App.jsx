@@ -6,9 +6,62 @@ const API_BASE = 'http://localhost:8000'
 const USER_ID = 'demo_user'
 const SPORTS = ['basketball', 'soccer', 'football']
 
+// NewsAPI configuration
+const NEWS_API_KEY = '297e85e50ef74dd9b111f17d3c9ae8e1' // Replace with actual API key
+const NEWS_API_BASE = 'https://newsapi.org/v2/everything'
+
+// Preferred sports analysts
+const PREFERRED_ANALYSTS = [
+  'Adam Schefter', 'Ian Rapoport', 'Jay Glazer', 'Tom Pelissero', 'Field Yates', 'Chris Mortensen',
+  'Adrian Wojnarowski', 'Shams Charania', 'Marc Stein', 'Brian Windhorst', 'Zach Lowe', 'Ken Rosenthal',
+  'Jeff Passan', 'Jon Heyman', 'Buster Olney', 'Elliotte Friedman', 'Pierre LeBrun', 'Darren Dreger',
+  'Pete Thamel', 'Bruce Feldman', 'Jay Bilas', 'Stephen A. Smith', 'Colin Cowherd', 'Skip Bayless',
+  'Michael Wilbon', 'Tony Kornheiser'
+]
+
 // Imported mock templates JSON: RAW_TEMPLATES
 
 async function fetchJSON(url, opts) { const res = await fetch(url, opts); if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json() }
+
+// Function to fetch news articles for a player
+async function fetchPlayerNews(playerName, sport, stat) {
+  if (!NEWS_API_KEY || NEWS_API_KEY === 'YOUR_NEWS_API_KEY_HERE') {
+    return { headline: 'API Key Required', source: 'NewsAPI' }
+  }
+
+  try {
+    // Create search query with player name, sport, and stat
+    const query = `${playerName} ${sport} ${stat}`.replace(/_/g, ' ')
+    
+    // First try to find articles from preferred analysts
+    const analystQuery = PREFERRED_ANALYSTS.map(analyst => `"${analyst}"`).join(' OR ')
+    const preferredUrl = `${NEWS_API_BASE}?q=${encodeURIComponent(query)}&sources=${analystQuery}&apiKey=${NEWS_API_KEY}&pageSize=5&sortBy=relevancy`
+    
+    let response = await fetch(preferredUrl)
+    let data = await response.json()
+    
+    // If no results from preferred analysts, try general search
+    if (!data.articles || data.articles.length === 0) {
+      const generalUrl = `${NEWS_API_BASE}?q=${encodeURIComponent(query)}&apiKey=${NEWS_API_KEY}&pageSize=5&sortBy=relevancy`
+      response = await fetch(generalUrl)
+      data = await response.json()
+    }
+    
+    if (data.articles && data.articles.length > 0) {
+      const article = data.articles[0]
+      return {
+        headline: article.title,
+        source: article.source.name,
+        url: article.url
+      }
+    }
+    
+    return { headline: 'No recent news found', source: 'NewsAPI' }
+  } catch (error) {
+    console.error('Error fetching news:', error)
+    return { headline: 'Error loading news', source: 'NewsAPI' }
+  }
+}
 
 function App() {
   const [activeTab, setActiveTab] = useState('basketball')
@@ -297,17 +350,43 @@ function Header({ activeTab, setActiveTab }) {
 
 function TemplatesView({ sport, templates, loading, addTemplate, updateTemplates }) {
   const [flippedCards, setFlippedCards] = useState(new Set())
+  const [newsData, setNewsData] = useState({})
+  const [loadingNews, setLoadingNews] = useState(new Set())
 
-  const toggleCardFlip = (cardId) => {
+  const toggleCardFlip = async (cardId, market) => {
     setFlippedCards(prev => {
       const newSet = new Set(prev)
       if (newSet.has(cardId)) {
         newSet.delete(cardId)
       } else {
         newSet.add(cardId)
+        // Fetch news when flipping to back side
+        if (!newsData[cardId] && !loadingNews.has(cardId)) {
+          fetchNewsForCard(cardId, market)
+        }
       }
       return newSet
     })
+  }
+
+  const fetchNewsForCard = async (cardId, market) => {
+    setLoadingNews(prev => new Set(prev).add(cardId))
+    try {
+      const news = await fetchPlayerNews(market.player_name, market.sport, market.selectedStat)
+      setNewsData(prev => ({ ...prev, [cardId]: news }))
+    } catch (error) {
+      console.error('Error fetching news for card:', error)
+      setNewsData(prev => ({ 
+        ...prev, 
+        [cardId]: { headline: 'Error loading news', source: 'NewsAPI' } 
+      }))
+    } finally {
+      setLoadingNews(prev => {
+        const newSet = new Set(prev)
+        newSet.delete(cardId)
+        return newSet
+      })
+    }
   }
 
   return (
@@ -318,11 +397,13 @@ function TemplatesView({ sport, templates, loading, addTemplate, updateTemplates
       <div className="panels-grid">
         {templates.map(m => {
           const isFlipped = flippedCards.has(m.id)
+          const news = newsData[m.id]
+          const isLoadingNews = loadingNews.has(m.id)
           return (
             <div 
               key={m.id} 
               className={`parlay-card ${isFlipped ? 'flipped' : ''}`}
-              onClick={() => toggleCardFlip(m.id)}
+              onClick={() => toggleCardFlip(m.id, m)}
               style={{ cursor: 'pointer' }}
             >
               <div className="card-inner">
@@ -385,8 +466,21 @@ function TemplatesView({ sport, templates, loading, addTemplate, updateTemplates
                     <strong>{shortName(m.player_name)}</strong>
                   </div>
                   <div className="context-content">
-                    <div className="context-placeholder">FILLER</div>
-                    <div className="context-subtitle">Analyst Context Coming Soon</div>
+                    {isLoadingNews ? (
+                      <div className="context-loading">Loading news...</div>
+                    ) : news ? (
+                      <div className="news-content">
+                        <div className="news-headline">{news.headline}</div>
+                        <div className="news-source">Source: {news.source}</div>
+                        {news.url && (
+                          <a href={news.url} target="_blank" rel="noopener noreferrer" className="news-link">
+                            Read more
+                          </a>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="context-placeholder">Click to load news</div>
+                    )}
                   </div>
                 </div>
               </div>
